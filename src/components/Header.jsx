@@ -16,7 +16,9 @@ const Header = () => {
 
     return (
 
+
         <Navbar collapseOnSelect expand="lg"  style={{ width: '100%', backgroundColor:"#b4ff43d2",marginBottom:"20px",}} >
+
         <Container  >
           <Navbar.Brand  as={Link} to="/"  style={{color:"rgba(74, 73, 73,0.749", fontWeight:"bold"}}>Pronadji Trenera</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -27,6 +29,7 @@ const Header = () => {
               <Nav.Link  as={Link} to="/">Favoriti</Nav.Link>
               
                </Nav>
+
                <Nav>
               <Nav.Link  as={Link} to="/register">Signup</Nav.Link>
              
@@ -35,6 +38,7 @@ const Header = () => {
               <Nav.Link  as={Link} to="/login">Login</Nav.Link>
              
             </Nav>
+
             <Nav>
               <Nav.Link  as={Link} to="/">Kontakt</Nav.Link>
              

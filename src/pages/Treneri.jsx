@@ -13,7 +13,9 @@ const Treneri = () => {
   useEffect(() => {
     const fetchTrainers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/trainers'); 
+
+        const response = await axios.get('http://localhost:5000/treiners'); 
+
         setTrainers(response.data); 
         setLoading(false); 
       } catch (err) {
@@ -29,7 +31,9 @@ const Treneri = () => {
     <main>
       <Container maxWidth={false} sx={{ backgroundColor: 'rgba(74, 73, 73, 0.749)' }}>
         <Typography variant="h4" sx={{ marginBottom: 2, color: 'white' }}>
+
           Pronađi trenera po tvojoj meri
+
         </Typography>
 
         {loading && <Typography>Loading...</Typography>} 

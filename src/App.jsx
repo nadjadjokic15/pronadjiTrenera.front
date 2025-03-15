@@ -21,12 +21,13 @@ function App() {
     <div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<MainLayout />}>
+          <Route path="/" element={<MainLayout />} >
             <Route index element={<Home />} />
             
             <Route path="/trainers" element={<GuardRoute element={<Treneri />} />} />
             <Route path="/register" element={<SignUp />}/>
             <Route path="/login" element={<Login />}/>
+
             <Route path="*" element={<div>404 - Not Found</div>} />
           </Route>
         </Routes>
@@ -35,6 +36,5 @@ function App() {
   </AuthProvider>
   );
 }
-
 
 export default App;
