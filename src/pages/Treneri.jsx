@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Grid, Typography, Card, CardContent, CardMedia } from '@mui/material/Grid';
+import { Box, Container, Typography, Card, CardContent, CardMedia } from '@mui/material';
 import { motion } from 'framer-motion';
 import axios from 'axios'; 
+import Grid from '@mui/material/Grid';
 
 const Treneri = () => {
   const [trainers, setTrainers] = useState([]); 
@@ -12,7 +13,7 @@ const Treneri = () => {
   useEffect(() => {
     const fetchTrainers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/treiners'); 
+        const response = await axios.get('http://localhost:5000/trainers'); 
         setTrainers(response.data); 
         setLoading(false); 
       } catch (err) {
@@ -28,7 +29,7 @@ const Treneri = () => {
     <main>
       <Container maxWidth={false} sx={{ backgroundColor: 'rgba(74, 73, 73, 0.749)' }}>
         <Typography variant="h4" sx={{ marginBottom: 2, color: 'white' }}>
-          List of Trainers
+          Pronađi trenera po tvojoj meri
         </Typography>
 
         {loading && <Typography>Loading...</Typography>} 
@@ -56,6 +57,17 @@ const Treneri = () => {
                       <Typography variant="body2" color="text.secondary">
                         {trainer.description}
                       </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {trainer.type}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {trainer.price}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {trainer.location}
+                      </Typography>
+                      
+
                     </CardContent>
                   </Card>
                 </motion.div>

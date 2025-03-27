@@ -3,7 +3,12 @@ import slika1 from "../assets/slika1.jfif"
 import slika4 from "../assets/slika4.jfif"
 import slika3 from "../assets/slika3.jfif"
 import React from 'react';
-import { Box, Container,Grid, Typography } from "@mui/material/Grid";
+// import {  Container,Grid, Typography } from "@mui/material/Grid";
+import Box from '@mui/material/Box';
+import { Container } from "@mui/material";
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+
 
 import { motion } from "framer-motion";
 

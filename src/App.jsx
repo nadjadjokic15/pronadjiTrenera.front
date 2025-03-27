@@ -7,10 +7,13 @@ import Home from './pages/Home'
 import Treneri from './pages/Treneri';
 import Footer from './components/Footer';
 import Header from './components/Header';
-// import Contact from './pages/Contact'
-// import Trainers from './pages/Trainers'
 import { AuthProvider } from './context/AuthContext';
 import GuardRoute from './components/GuardRoute'; 
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
+
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'; 
 
 function App() {
   return (
@@ -22,6 +25,8 @@ function App() {
             <Route index element={<Home />} />
             
             <Route path="/trainers" element={<GuardRoute element={<Treneri />} />} />
+            <Route path="/register" element={<SignUp />}/>
+            <Route path="/login" element={<Login />}/>
             <Route path="*" element={<div>404 - Not Found</div>} />
           </Route>
         </Routes>
