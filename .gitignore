@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-node_modules
+
+
 .env
 =======
 # Logs
@@ -26,4 +26,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
->>>>>>> ec65ed7 (initial commit)
+
