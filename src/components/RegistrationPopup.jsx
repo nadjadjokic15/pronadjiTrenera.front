@@ -1,9 +1,11 @@
+
+
 import React, { useEffect, useState } from 'react';
-import { Modal, Box, Button, TextField, Typography, FormControl, Select, MenuItem, InputLabel, CircularProgress } from '@mui/material';
+import { Modal, Box, Button, TextField, Typography, FormControl, Select, MenuItem, InputLabel, CircularProgress, Link } from '@mui/material';
 import axios from 'axios'; 
 import { useAuth } from '../context/AuthContext';
 
-const RegistrationPopup = () => {
+const LoginPopup = () => {
   const [open, setOpen] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -15,13 +17,11 @@ const RegistrationPopup = () => {
 
   const handleClose = () => setOpen(false);
   
-  const handleRegister = () => {
-    
+  const handleLogin = () => {
     login({ username });
     handleClose();
   };
 
-  
   const handleRoleChange = (event) => {
     setSelectedRole(event.target.value);
   };
@@ -31,7 +31,6 @@ const RegistrationPopup = () => {
       try {
         const response = await axios.get('http://localhost:5000/roles'); 
         setRoles(response.data); 
-        console.log(response.data);
         setLoading(false); 
       } catch (err) {
         setError('Failed to fetch roles');
@@ -48,17 +47,18 @@ const RegistrationPopup = () => {
         sx={{
           width: 400,
           padding: 3,
-          margin: '0 auto',
           backgroundColor: 'white',
           borderRadius: '8px',
-          top: '100%',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
         }}
       >
-        <Typography variant="h6" gutterBottom>
-          Please Register
+        <Typography variant="h6" gutterBottom align="center">
+          Please Log In
         </Typography>
 
-        
         <TextField
           label="Username"
           fullWidth
@@ -76,7 +76,7 @@ const RegistrationPopup = () => {
           sx={{ marginBottom: 2 }}
         />
 
-        <FormControl fullWidth>
+        <FormControl fullWidth sx={{ marginBottom: 2 }}>
           <InputLabel>Role</InputLabel>
           <Select
             value={selectedRole}
@@ -84,7 +84,6 @@ const RegistrationPopup = () => {
             label="Role"
             disabled={loading} 
           >
-            
             {roles?.map((role, index) => (
               <MenuItem key={index} value={role}>
                 {role}
@@ -100,18 +99,34 @@ const RegistrationPopup = () => {
           </Box>
         )}
 
-
-        {error && <Typography color="error">{error}</Typography>}
+        
+        {error && <Typography color="error" align="center">{error}</Typography>}
 
         
-        {selectedRole && <Typography>You selected: {selectedRole}</Typography>}
+        {selectedRole && !loading && <Typography align="center">You selected: {selectedRole}</Typography>}
 
-        <Button variant="contained" onClick={handleRegister} sx={{ marginTop: 2 }}>
-          Register
+        
+        <Button 
+          variant="contained" 
+          onClick={handleLogin} 
+          sx={{ marginTop: 2, backgroundColor:"#b4ff43d2"  }} 
+          disabled={loading || !username || !password || !selectedRole}
+        >
+          Log In
         </Button>
+
+        
+        <Box sx={{ marginTop: 2, textAlign: 'center' }}>
+          <Typography variant="body2">
+            Don't have an account?{' '}
+            <Link href="/register" sx={{ textDecoration: 'none' }}>
+              SignUp
+            </Link>
+          </Typography>
+        </Box>
       </Box>
     </Modal>
   );
 };
 
-export default RegistrationPopup;
+export default LoginPopup;

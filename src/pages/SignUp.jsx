@@ -1,6 +1,4 @@
 
-
-
 import axios from "axios";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -15,6 +13,13 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
     role: "",
+    name: "",  // For Trainer
+    surname: "",  // For Trainer
+    description: "",  // For Trainer
+    price: "",  // For Trainer
+    type: "",  // For Trainer
+    location: "",  // For Trainer
+    img_url: ""  // For Trainer
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -23,7 +28,6 @@ const SignUp = () => {
   const validateForm = () => {
     const errors = {};
 
-    
     if (!formValues.username) {
       errors.username = "Username is required";
     } else if (!/^[A-Za-z0-9_]{3,15}$/.test(formValues.username)) {
@@ -31,33 +35,39 @@ const SignUp = () => {
         "Username should be 3-15 characters long and can only contain letters, numbers, and underscores.";
     }
 
-    
     if (!formValues.email) {
       errors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formValues.email)) {
       errors.email = "Please enter a valid email address";
     }
 
-    
     if (!formValues.mobile) {
       errors.mobile = "Mobile number is required";
     } else if (!/^\d{10}$/.test(formValues.mobile)) {
       errors.mobile = "Mobile number should be 10 digits";
     }
 
-    
     if (!formValues.password) {
       errors.password = "Password is required";
     }
-
 
     if (formValues.password !== formValues.confirmPassword) {
       errors.confirmPassword = "Passwords do not match";
     }
 
-    
     if (!formValues.role) {
       errors.role = "Role is required";
+    }
+
+    // Additional validation for Trainer fields
+    if (formValues.role === "trainer") {
+      if (!formValues.name) errors.name = "Name is required for Trainer";
+      if (!formValues.surname) errors.surname = "Surname is required for Trainer";
+      if (!formValues.description) errors.description = "Description is required for Trainer";
+      if (!formValues.price) errors.price = "Price is required for Trainer";
+      if (!formValues.type) errors.type = "Type is required for Trainer";
+      if (!formValues.location) errors.location = "Location is required for Trainer";
+      if (!formValues.img_url) errors.img_url = "Image URL is required for Trainer";
     }
 
     return errors;
@@ -73,11 +83,11 @@ const SignUp = () => {
       try {
         setLoading(true); 
 
-        const response = await axios.post("http://localhost:5000/trainers", formValues);
+        const response = await axios.post("http://localhost:5000/users", formValues); // Adjust the URL if needed
 
         if (response.data.success) {
           toast.success(response.data.message || "Registration successful!");
-          setFormValues({ username: "", email: "", mobile: "", password: "", confirmPassword: "", role: "" });
+          setFormValues({ username: "", email: "", mobile: "", password: "", confirmPassword: "", role: "", name: "", surname: "", description: "", price: "", type: "", location: "", img_url: "" });
           setFormErrors({});
         } else {
           toast.error(response.data.message || "Registration failed!");
@@ -172,6 +182,94 @@ const SignUp = () => {
           </select>
           {formErrors.role && <span className="error-message">{formErrors.role}</span>}
         </div>
+
+        {/* Show Trainer specific fields if role is "trainer" */}
+        {formValues.role === "trainer" && (
+          <>
+            <div className="form-group">
+              <label>Trainer Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your name"
+                value={formValues.name}
+                onChange={handleInputChange}
+              />
+              {formErrors.name && <span className="error-message">{formErrors.name}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Trainer Surname</label>
+              <input
+                type="text"
+                name="surname"
+                placeholder="Enter your surname"
+                value={formValues.surname}
+                onChange={handleInputChange}
+              />
+              {formErrors.surname && <span className="error-message">{formErrors.surname}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Description</label>
+              <textarea
+                name="description"
+                placeholder="Describe yourself as a trainer"
+                value={formValues.description}
+                onChange={handleInputChange}
+              />
+              {formErrors.description && <span className="error-message">{formErrors.description}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Price</label>
+              <input
+                type="number"
+                name="price"
+                placeholder="Enter your price"
+                value={formValues.price}
+                onChange={handleInputChange}
+              />
+              {formErrors.price && <span className="error-message">{formErrors.price}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Type</label>
+              <input
+                type="text"
+                name="type"
+                placeholder="Enter your type (e.g., fitness, yoga)"
+                value={formValues.type}
+                onChange={handleInputChange}
+              />
+              {formErrors.type && <span className="error-message">{formErrors.type}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                name="location"
+                placeholder="Enter your location"
+                value={formValues.location}
+                onChange={handleInputChange}
+              />
+              {formErrors.location && <span className="error-message">{formErrors.location}</span>}
+            </div>
+
+            <div className="form-group">
+              <label>Image URL</label>
+              <input
+                type="text"
+                name="img_url"
+                placeholder="Enter your image URL"
+                value={formValues.img_url}
+                onChange={handleInputChange}
+              />
+              {formErrors.img_url && <span className="error-message">{formErrors.img_url}</span>}
+            </div>
+          </>
+        )}
 
         <button type="submit" className="login-btn" disabled={loading}>
           {loading ? "Signing Up..." : "Sign Up"}
