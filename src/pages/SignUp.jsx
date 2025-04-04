@@ -83,7 +83,7 @@ const SignUp = () => {
       try {
         setLoading(true); 
 
-        const response = await axios.post("http://localhost:5000/users", formValues); // Adjust the URL if needed
+        const response = await axios.post("http://localhost:5000/api/auth/register", formValues); // Adjust the URL if needed
 
         if (response.data.success) {
           toast.success(response.data.message || "Registration successful!");

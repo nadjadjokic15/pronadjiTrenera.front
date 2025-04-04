@@ -11,6 +11,8 @@ import { AuthProvider } from './context/AuthContext';
 import GuardRoute from './components/GuardRoute'; 
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import Favorites from './pages/Favorites';
+
 
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'; 
@@ -25,6 +27,8 @@ function App() {
             <Route index element={<Home />} />
             
             <Route path="/trainers" element={<GuardRoute element={<Treneri />} />} />
+            <Route path="/favorites" element={<GuardRoute element={<Favorites/>}/>}/>
+            
             <Route path="/register" element={<SignUp />}/>
             <Route path="/login" element={<Login />}/>
 
