@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import RegistrationPopup from './RegistrationPopup';
+import LoginPopup from './RegistrationPopup';
 
 const GuardRoute = ({ element, ...rest }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const [popupOpen, setPopupOpen] = useState(false);
 
+  
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !loading) {
       setPopupOpen(true); 
     }
-  }, [isAuthenticated]); 
+  }, [isAuthenticated, loading]);
 
   
   if (isAuthenticated) {
@@ -21,10 +22,10 @@ const GuardRoute = ({ element, ...rest }) => {
   
   return (
     <>
-      
-      <RegistrationPopup open={popupOpen} handleClose={() => setPopupOpen(false)} />
+      {popupOpen && <LoginPopup open={popupOpen} handleClose={() => setPopupOpen(false)} />}
     </>
   );
 };
+
 
 export default GuardRoute;

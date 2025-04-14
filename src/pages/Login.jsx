@@ -1,16 +1,19 @@
+
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./SignUp.css"
-
+import "./SignUp.css";
+import { jwtDecode } from 'jwt-decode'
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const navigate=useNavigate();
+  const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate();
 
+  
   const validateForm = () => {
     const errors = {};
     if (!email) {
@@ -24,114 +27,136 @@ const Login = () => {
     return errors;
   };
 
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formErrors = validateForm();
+    setErrors(formErrors);
 
+    
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    }
 
     try {
-   
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      setLoading(true); 
+      
+      
+      const response = await axios.post("http://localhost:5001/api/auth/login", {
         email,
         password,
       });
 
-      if (response.data.success) {
-        console.log(response);
-        
+      console.log("Login response:", response.data);
+
+      
+      if (response.data.token) {
         toast.success("Login successful!");
-       
+
         const token = response.data.token;
-        console.log(token);
-        
         sessionStorage.setItem("authToken", token);
-        navigate('/homeScreen')
-        fetchUserDetails();
+
+        
+        try {
+          const user = jwtDecode(token);
+          console.log(user);
+          sessionStorage.setItem("user", user.role);
+        } catch (decodeError) {
+          console.error("Error decoding token:", decodeError);
+          toast.error("Error decoding token.");
+        }
+
+        console.log("Token saved:", token);
+
+        
+        navigate('/login');
       } else {
-        toast.error(response.data.message || "Login failed");
+        toast.error("Login failed: No token received.");
       }
     } catch (error) {
       console.error("Error during login:", error);
-      toast.error(error.response.data.message || "Something went wrong. Please try again later.");
-    }
-  };
 
- 
-
- 
-  const fetchUserDetails = async () => {
-    try {
       
-      const token = sessionStorage.getItem('authToken');
-      console.log(token);
-      
-      if (!token) {
+      if (error.response) {
         
-        return;
-      }
-
-      const response = await axios.get('http://localhost:5000/trainers', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      console.log(response);
-      
-      if (response.data.success) {
-        console.log(response.data.user);
+        toast.error(error.response?.data?.message || "Login failed. Please check your credentials.");
+      } else if (error.request) {
+        
+        toast.error("No response from server. Please try again later.");
       } else {
-        console.log(response.data.message || 'Failed to fetch user details');
+        
+        toast.error("Something went wrong during login.");
       }
-    } catch (err) {
-      console.error('Error fetching user details:', err);
-      console.log(err.response?.data?.message || 'An error occurred');
+    } finally {
+      setLoading(false); 
     }
   };
 
+  
+  const handleLogout = () => {
+    sessionStorage.removeItem("authToken")
+    sessionStorage.removeItem("user") 
+    toast.success("Logout successful!"); 
+    navigate("/"); 
+  };
+
+  
+  const isLoggedIn = sessionStorage.getItem("authToken");
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {errors.email && <span className="error-message">{errors.email}</span>}
+      {!isLoggedIn ? (
+        <>
+          <h2>Login</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {errors.email && <span className="error-message">{errors.email}</span>}
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {errors.password && <span className="error-message">{errors.password}</span>}
+            </div>
+
+            <button type="submit" className="login-btn" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+
+          <p style={{ textAlign: "center" }}>
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="toggle-link"
+              style={{ color: "#007BFF", textDecoration: "underline" }}
+            >
+              Sign Up
+            </Link>
+          </p>
+        </>
+      ) : (
+        <div>
+          <h2>You are logged in</h2>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
         </div>
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {errors.password && <span className="error-message">{errors.password}</span>}
-        </div>
-        <button type="submit" className="login-btn">
-          Login
-        </button>
-      </form>
-      
-      <p style={{ textAlign: "center" }}>
-        Don't have an account?{" "}
-        <Link
-          to="/register"
-          className="toggle-link"
-          style={{ color: "#007BFF", textDecoration: "underline" }}
-        >
-          Sign Up
-        </Link>
-      </p>
+      )}
     </div>
   );
 };

@@ -1,7 +1,6 @@
-
-import slika1 from "../assets/slika1.jfif"
-import slika4 from "../assets/slika4.jfif"
-import slika3 from "../assets/slika3.jfif"
+import slika8 from "../assets/slika8.jpg"
+import slika6 from "../assets/slika6.jpg"
+import slika7 from "../assets/slika7.webp"
 import React from 'react';
 
 // import {  Container,Grid, Typography } from "@mui/material/Grid";
@@ -44,7 +43,7 @@ const Home = () => {
           >
             <Box
               component="img"
-              src={slika1}
+              src={slika8}
               alt="Personal Trainer"
               sx={{
                 width: "90%",
@@ -93,7 +92,7 @@ const Home = () => {
           <Grid item xs={12} md={6} >
             <Box
               component="img"
-              src={slika4}
+              src={slika6}
               alt="Trainer Search"
               sx={{
                 width: "90%",
@@ -160,7 +159,7 @@ const Home = () => {
           <Grid item xs={12} md={6} sx={{padding:4,}}>
             <Box
               component="img"
-              src={slika3}
+              src={slika7}
               alt="Goal Achievement"
               sx={{
                 width: "90%",

@@ -1,8 +1,8 @@
 
-import axios from "axios";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import { toast } from "react-toastify";
+import axios from "axios";
 import "./SignUp.css";
 
 const SignUp = () => {
@@ -23,7 +23,9 @@ const SignUp = () => {
   });
 
   const [formErrors, setFormErrors] = useState({});
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate(); 
 
   const validateForm = () => {
     const errors = {};
@@ -59,7 +61,7 @@ const SignUp = () => {
       errors.role = "Role is required";
     }
 
-    // Additional validation for Trainer fields
+    
     if (formValues.role === "trainer") {
       if (!formValues.name) errors.name = "Name is required for Trainer";
       if (!formValues.surname) errors.surname = "Surname is required for Trainer";
@@ -83,12 +85,35 @@ const SignUp = () => {
       try {
         setLoading(true); 
 
-        const response = await axios.post("http://localhost:5000/api/auth/register", formValues); // Adjust the URL if needed
+        const response = await axios.post("http://localhost:5001/api/auth/register", formValues);
 
-        if (response.data.success) {
+        console.log("Response:", response); 
+
+        if (response.status === 201) { 
           toast.success(response.data.message || "Registration successful!");
-          setFormValues({ username: "", email: "", mobile: "", password: "", confirmPassword: "", role: "", name: "", surname: "", description: "", price: "", type: "", location: "", img_url: "" });
-          setFormErrors({});
+
+          setFormValues({ 
+            username: "", 
+            email: "", 
+            mobile: "", 
+            password: "", 
+            confirmPassword: "", 
+            role: "", 
+            name: "", 
+            surname: "", 
+            description: "", 
+            price: "", 
+            type: "", 
+            location: "", 
+            img_url: "" 
+          });
+
+          setFormErrors({}); 
+
+          console.log("Navigating to /trainers..."); 
+          setTimeout(() => {
+            navigate("/trainers");
+          }, 1000); 
         } else {
           toast.error(response.data.message || "Registration failed!");
         }
@@ -136,7 +161,7 @@ const SignUp = () => {
         <div className="form-group">
           <label>Mobile No</label>
           <input
-            type="tel"
+            type="text"
             name="mobile"
             placeholder="Enter your mobile number"
             value={formValues.mobile}
@@ -176,22 +201,22 @@ const SignUp = () => {
             value={formValues.role}
             onChange={handleInputChange}
           >
-            <option value="select-role">Select role</option>
-            <option value="trainer">Trainer</option>
+            <option value="">Select Role</option>
             <option value="client">Client</option>
+            <option value="trainer">Trainer</option>
           </select>
           {formErrors.role && <span className="error-message">{formErrors.role}</span>}
         </div>
 
-        {/* Show Trainer specific fields if role is "trainer" */}
+        
         {formValues.role === "trainer" && (
           <>
             <div className="form-group">
-              <label>Trainer Name</label>
+              <label>Name</label>
               <input
                 type="text"
-                name="name"
                 placeholder="Enter your name"
+                name="name"
                 value={formValues.name}
                 onChange={handleInputChange}
               />
@@ -199,11 +224,11 @@ const SignUp = () => {
             </div>
 
             <div className="form-group">
-              <label>Trainer Surname</label>
+              <label>Surname</label>
               <input
                 type="text"
-                name="surname"
                 placeholder="Enter your surname"
+                name="surname"
                 value={formValues.surname}
                 onChange={handleInputChange}
               />
@@ -212,9 +237,10 @@ const SignUp = () => {
 
             <div className="form-group">
               <label>Description</label>
-              <textarea
+              <input
+                type="text"
+                placeholder="Enter your description"
                 name="description"
-                placeholder="Describe yourself as a trainer"
                 value={formValues.description}
                 onChange={handleInputChange}
               />
@@ -224,9 +250,9 @@ const SignUp = () => {
             <div className="form-group">
               <label>Price</label>
               <input
-                type="number"
-                name="price"
+                type="text"
                 placeholder="Enter your price"
+                name="price"
                 value={formValues.price}
                 onChange={handleInputChange}
               />
@@ -237,8 +263,8 @@ const SignUp = () => {
               <label>Type</label>
               <input
                 type="text"
+                placeholder="Enter your type"
                 name="type"
-                placeholder="Enter your type (e.g., fitness, yoga)"
                 value={formValues.type}
                 onChange={handleInputChange}
               />
@@ -249,8 +275,8 @@ const SignUp = () => {
               <label>Location</label>
               <input
                 type="text"
-                name="location"
                 placeholder="Enter your location"
+                name="location"
                 value={formValues.location}
                 onChange={handleInputChange}
               />
@@ -261,8 +287,8 @@ const SignUp = () => {
               <label>Image URL</label>
               <input
                 type="text"
-                name="img_url"
                 placeholder="Enter your image URL"
+                name="img_url"
                 value={formValues.img_url}
                 onChange={handleInputChange}
               />
@@ -271,23 +297,15 @@ const SignUp = () => {
           </>
         )}
 
-        <button type="submit" className="login-btn" disabled={loading}>
-          {loading ? "Signing Up..." : "Sign Up"}
-        </button>
+        <div className="form-group">
+          <button type="submit" disabled={loading}>
+            {loading ? "Registering..." : "Sign Up"}
+          </button>
+        </div>
       </form>
-
-      <p style={{ textAlign: "center" }}>
-        Already have an account?{" "}
-        <Link
-          to="/login"
-          className="toggle-link"
-          style={{ color: "#007BFF", textDecoration: "underline" }}
-        >
-          Login
-        </Link>
-      </p>
     </div>
   );
 };
 
 export default SignUp;
+

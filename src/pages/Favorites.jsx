@@ -1,13 +1,26 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Card, CardContent, CardMedia, Grid, IconButton, Snackbar, Box } from '@mui/material';
 import { Favorite } from '@mui/icons-material';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import LoginPopup from '../components/RegistrationPopup'; 
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
-  const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar status
-  const [removedTrainer, setRemovedTrainer] = useState(null); // Trenutno uklonjeni trener
+  const [openSnackbar, setOpenSnackbar] = useState(false); 
+  const [removedTrainer, setRemovedTrainer] = useState(null);
+  const { isAuthenticated } = useAuth();  
+  const [isModalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setModalOpen(true); 
+    } else {
+      setModalOpen(false); 
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const savedFavorites = localStorage.getItem('favorites');
@@ -28,12 +41,17 @@ const Favorites = () => {
     setOpenSnackbar(false);
   };
 
+  const handleLoginSuccess = () => {
+    setModalOpen(false);  
+    
+  };
+
   return (
     <main>
       <Container maxWidth="lg" sx={{ marginTop: 4 }}>
         <Typography 
           variant="h4" 
-          sx={{ marginBottom: 4, textAlign: 'center', color: 'white' }}
+          sx={{ marginBottom: 4, textAlign: 'center', color: '#b4ff43d2' }}
         >
           Moji omiljeni treneri
         </Typography>
@@ -92,7 +110,6 @@ const Favorites = () => {
           </Typography>
         )}
 
-        {/* Snackbar za obaveštenje kada je favorit uklonjen */}
         <Snackbar
           open={openSnackbar}
           autoHideDuration={3000}
@@ -101,6 +118,13 @@ const Favorites = () => {
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         />
       </Container>
+
+      
+      <LoginPopup 
+        open={isModalOpen} 
+        onClose={() => setModalOpen(false)} 
+        onLoginSuccess={handleLoginSuccess} 
+      />
     </main>
   );
 };

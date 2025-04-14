@@ -40,7 +40,7 @@ const Header = () => {
             </Nav>
 
             <Nav>
-              <Nav.Link  as={Link} to="/">Kontakt</Nav.Link>
+              <Nav.Link  as={Link} to="/appointments">Zakaži termin</Nav.Link>
              
             </Nav>
           </Navbar.Collapse>

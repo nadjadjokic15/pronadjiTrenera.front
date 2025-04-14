@@ -1,69 +1,83 @@
-
-
-import React, { useEffect, useState } from 'react';
-import { Modal, Box, Button, TextField, Typography, FormControl, Select, MenuItem, InputLabel, CircularProgress, Link } from '@mui/material';
-import axios from 'axios'; 
+import React, { useState, useEffect } from 'react';
+import { Modal, Box, Typography, TextField, Button, CircularProgress, Link } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import {toast} from 'react-toastify';
 
-const LoginPopup = () => {
-  const [open, setOpen] = useState(true);
-  const [username, setUsername] = useState('');
+
+const LoginPopup = ({ open, onClose, onLoginSuccess }) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
-  const [roles, setRoles] = useState([]);  
-  const [selectedRole, setSelectedRole] = useState('');
-  const [loading, setLoading] = useState(true);  
-  const [error, setError] = useState('');  
+  const navigate = useNavigate();
 
-  const handleClose = () => setOpen(false);
-  
-  const handleLogin = () => {
-    login({ username });
-    handleClose();
+  const validateEmail = (email) => {
+    const regex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+    return regex.test(email);
   };
 
-  const handleRoleChange = (event) => {
-    setSelectedRole(event.target.value);
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Please fill in all fields.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email.');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await axios.post('http://localhost:5001/api/auth/login', { email, password });
+      if (response.data.token) {
+        sessionStorage.setItem('authToken', response.data.token);
+        sessionStorage.setItem('user', JSON.stringify(response.data.user));
+        login(response.data.token, response.data.user);
+        toast.success('Login successful!');
+        if (onLoginSuccess) {
+          onLoginSuccess(); 
+        }
+        if (onClose) {
+          onClose(); 
+        }
+        navigate('/trainers'); 
+      } else {
+        toast.error('Login failed: No token received');
+      }
+    } catch (error) {
+      console.error('Login failed', error);
+      setError(error?.response?.data?.message || 'Failed to log in. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await axios.get('http://localhost:5001/roles'); 
-        setRoles(response.data); 
-        setLoading(false); 
-      } catch (err) {
-        setError('Failed to fetch roles');
-        setLoading(false); 
-      }
-    };
-
-    fetchRoles(); 
-  }, []);
+    if (!open) {
+      setEmail('');
+      setPassword('');
+      setError('');
+    }
+  }, [open]);
 
   return (
-    <Modal open={open} onClose={handleClose}>
-      <Box
-        sx={{
-          width: 400,
-          padding: 3,
-          backgroundColor: 'white',
-          borderRadius: '8px',
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-        }}
-      >
+    <Modal open={open} onClose={onClose}>
+      <Box sx={{ width: 400, padding: 3, backgroundColor: 'white', borderRadius: '8px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
         <Typography variant="h6" gutterBottom align="center">
           Please Log In
         </Typography>
 
         <TextField
-          label="Username"
+          label="Email"
           fullWidth
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           sx={{ marginBottom: 2 }}
         />
 
@@ -76,51 +90,32 @@ const LoginPopup = () => {
           sx={{ marginBottom: 2 }}
         />
 
-        <FormControl fullWidth sx={{ marginBottom: 2 }}>
-          <InputLabel>Role</InputLabel>
-          <Select
-            value={selectedRole}
-            onChange={handleRoleChange}
-            label="Role"
-            disabled={loading} 
-          >
-            {roles?.map((role, index) => (
-              <MenuItem key={index} value={role}>
-                {role}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        
         {loading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
             <CircularProgress />
           </Box>
         )}
 
-        
         {error && <Typography color="error" align="center">{error}</Typography>}
 
-        
-        {selectedRole && !loading && <Typography align="center">You selected: {selectedRole}</Typography>}
-
-        
-        <Button 
-          variant="contained" 
-          onClick={handleLogin} 
-          sx={{ marginTop: 2, backgroundColor:"#b4ff43d2"  }} 
-          disabled={loading || !username || !password || !selectedRole}
+        <Button
+          variant="contained"
+          onClick={handleLogin}
+          sx={{
+            marginTop: 3,
+            backgroundColor: "#b4ff43d2",
+            '&:hover': { backgroundColor: "#8dbb0b" },
+          }}
+          disabled={loading || !email || !password}
         >
           Log In
         </Button>
 
-        
         <Box sx={{ marginTop: 2, textAlign: 'center' }}>
           <Typography variant="body2">
             Don't have an account?{' '}
             <Link href="/register" sx={{ textDecoration: 'none' }}>
-              SignUp
+              Sign Up
             </Link>
           </Typography>
         </Box>
@@ -130,3 +125,5 @@ const LoginPopup = () => {
 };
 
 export default LoginPopup;
+
+

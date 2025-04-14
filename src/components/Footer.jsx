@@ -11,8 +11,11 @@ const Footer = () => {
         padding: "1rem",
         textAlign: "center",
         position: "relative", 
-        bottom: 0,
-        width: "100%", 
+        
+        // bottom: 0,
+        width: "100%",
+        
+         
       }}
     >
       <Typography variant="body2">

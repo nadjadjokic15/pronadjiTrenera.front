@@ -1,17 +1,23 @@
-
 import React, { useEffect, useState } from 'react';
 import { Box, Container, Typography, Card, CardContent, CardMedia, Grid, IconButton, Pagination, Link } from '@mui/material';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import Filteri from '../components/Filteri';
-import MapaComponent from '../components/MapaComponent'; // Mapa komponenta
+import MapaComponent from '../components/MapaComponent';
+import LoginPopup from '../components/RegistrationPopup'; 
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Treneri = () => {
   const [trainers, setTrainers] = useState([]);
   const [filteredTrainers, setFilteredTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem('favorites');
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
 
   const [priceFilter, setPriceFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
@@ -21,15 +27,23 @@ const Treneri = () => {
   const [locationOptions, setLocationOptions] = useState([]);
   const [typeOptions, setTypeOptions] = useState([]);
 
-  const [favorites, setFavorites] = useState(() => {
-    const savedFavorites = localStorage.getItem('favorites');
-    return savedFavorites ? JSON.parse(savedFavorites) : [];
-  });
-
   const [currentPage, setCurrentPage] = useState(1);
   const trainersPerPage = 6;
 
+  const [isModalOpen, setModalOpen] = useState(false); 
+  const { isAuthenticated } = useAuth(); 
+
+  const navigate = useNavigate();
+
+  
   useEffect(() => {
+    const token = sessionStorage.getItem('authToken');
+    if (!token) {
+      setModalOpen(true); 
+    } else {
+      setModalOpen(false); 
+    }
+
     const fetchTrainers = async () => {
       try {
         const response = await axios.get('http://localhost:5001/api/trainers');
@@ -91,6 +105,11 @@ const Treneri = () => {
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
 
+  const handleLoginSuccess = () => {
+    setModalOpen(false); 
+    navigate('/trainers'); 
+  };
+
   return (
     <main>
       <Container maxWidth={false} sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -115,64 +134,65 @@ const Treneri = () => {
             typeOptions={typeOptions}
           />
 
-          <Grid container spacing={3} justifyContent="center" alignItems="center">
-            {currentTrainers.length > 0 ? (
-              currentTrainers.map((trainer) => (
-                <Grid item xs={12} sm={6} md={4} key={trainer.id}>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Card sx={{
-                      maxWidth: 345,
-                      borderRadius: 3,
-                      boxShadow: 3,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        boxShadow: 6,
-                      },
-                    }}>
-                      <CardMedia
-                        component="img"
-                        height="200"
-                        image={trainer.image_url}
-                        alt={trainer.name}
-                      />
-                      <CardContent>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
-                          {trainer.name} {trainer.surname}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {trainer.description}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {trainer.type}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Price: {trainer.price} USD
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Location: {trainer.location}
-                        </Typography>
+          
+          {isAuthenticated && (
+            <Grid container spacing={3} justifyContent="center" alignItems="center">
+              {currentTrainers.length > 0 ? (
+                currentTrainers.map((trainer) => (
+                  <Grid item xs={12} sm={6} md={4} key={trainer.id}>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Card sx={{
+                        maxWidth: 345,
+                        borderRadius: 3,
+                        boxShadow: 3,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          boxShadow: 6,
+                        },
+                      }}>
+                        <CardMedia
+                          component="img"
+                          height="200"
+                          image={trainer.image_url}
+                          alt={trainer.name}
+                        />
+                        <CardContent>
+                          <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
+                            {trainer.name} {trainer.surname}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {trainer.description}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {trainer.type}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Price: {trainer.price} USD
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Location: {trainer.location}
+                          </Typography>
 
-                        <IconButton
-                          onClick={() => toggleFavorite(trainer)}
-                          color={favorites.some(fav => fav.id === trainer.id) ? 'primary' : 'default'}
-                        >
-                          {favorites.some(fav => fav.id === trainer.id) ? <Favorite /> : <FavoriteBorder />}
-                        </IconButton>
-
-                       
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </Grid>
-              ))
-            ) : (
-              <Typography>No trainers found.</Typography>
-            )}
-          </Grid>
+                          <IconButton
+                            onClick={() => toggleFavorite(trainer)}
+                            color={favorites.some(fav => fav.id === trainer.id) ? 'primary' : 'default'}
+                          >
+                            {favorites.some(fav => fav.id === trainer.id) ? <Favorite /> : <FavoriteBorder />}
+                          </IconButton>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </Grid>
+                ))
+              ) : (
+                <Typography>No trainers found.</Typography>
+              )}
+            </Grid>
+          )}
 
           <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
             <Pagination
@@ -184,10 +204,12 @@ const Treneri = () => {
             />
           </Box>
 
-          
           <MapaComponent trainers={filteredTrainers} />
         </Box>
       </Container>
+
+      
+      <LoginPopup open={isModalOpen} onClose={() => setModalOpen(false)} onLoginSuccess={handleLoginSuccess} />
     </main>
   );
 };
