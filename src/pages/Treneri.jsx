@@ -114,7 +114,7 @@ const Treneri = () => {
     <main>
       <Container maxWidth={false} sx={{ display: 'flex', justifyContent: 'center' }}>
         <Box sx={{ width: '100%', textAlign: 'center' }}>
-          <Typography variant="h4" sx={{ marginBottom: 2, color: 'white' }}>
+          <Typography variant="h4" sx={{ marginBottom: 2, color: '#b4ff43d2' }}>
             Pronađi trenera po tvojoj meri
           </Typography>
 
@@ -215,3 +215,4 @@ const Treneri = () => {
 };
 
 export default Treneri;
+

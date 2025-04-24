@@ -13,13 +13,13 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
     role: "",
-    name: "",  // For Trainer
-    surname: "",  // For Trainer
-    description: "",  // For Trainer
-    price: "",  // For Trainer
-    type: "",  // For Trainer
-    location: "",  // For Trainer
-    img_url: ""  // For Trainer
+    name: "", 
+    surname: "",  
+    description: "",  
+    price: "", 
+    type: "",  
+    location: "", 
+    image_url: ""  
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -69,7 +69,7 @@ const SignUp = () => {
       if (!formValues.price) errors.price = "Price is required for Trainer";
       if (!formValues.type) errors.type = "Type is required for Trainer";
       if (!formValues.location) errors.location = "Location is required for Trainer";
-      if (!formValues.img_url) errors.img_url = "Image URL is required for Trainer";
+      if (!formValues.image_url) errors.image_url = "Image URL is required for Trainer";
     }
 
     return errors;
@@ -105,7 +105,7 @@ const SignUp = () => {
             price: "", 
             type: "", 
             location: "", 
-            img_url: "" 
+            image_url: "" 
           });
 
           setFormErrors({}); 
@@ -288,11 +288,11 @@ const SignUp = () => {
               <input
                 type="text"
                 placeholder="Enter your image URL"
-                name="img_url"
-                value={formValues.img_url}
+                name="image_url"
+                value={formValues.image_url}
                 onChange={handleInputChange}
               />
-              {formErrors.img_url && <span className="error-message">{formErrors.img_url}</span>}
+              {formErrors.image_url && <span className="error-message">{formErrors.image_url}</span>}
             </div>
           </>
         )}

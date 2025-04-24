@@ -3,7 +3,7 @@ import slika6 from "../assets/slika6.jpg"
 import slika7 from "../assets/slika7.webp"
 import React from 'react';
 
-// import {  Container,Grid, Typography } from "@mui/material/Grid";
+
 import Box from '@mui/material/Box';
 import { Container } from "@mui/material";
 import Grid from '@mui/material/Grid';
@@ -11,22 +11,25 @@ import Typography from '@mui/material/Typography';
 
 
 import { motion } from "framer-motion";
+const images=[slika8, slika7, slika6]
 
 const Home = () => {
+  const repeatedImages = [...images, ...images, ...images, ...images];
   return (
     <main>
+   
       <Container maxWidth={false} sx={{
-        backgroundColor:'rgba(74, 73, 73, 0.749)',
-        color:"white",
+        
+        justifyContent:'center',
         
         
-       
-        }}>
+        color:'white',}}>
         
-        <Grid container spacing={2}  alignItems="center" >
+        <Grid container spacing={2}  alignItems="center" 
+        >
           <Grid item xs={12} md={6} >
-            <Typography variant="h3.3" component="h1" gutterBottom sx={{color:"#b4ff43d2"}}>
-              PERSONALNI TRENER NAMENJEN BAŠ ZA TEBE
+            <Typography variant="h3.3" component="h1" gutterBottom sx={{color:"#b4ff43d2",}}>
+              PERSONALNI TRENER NAMENJEN TEBI
             </Typography>
             <Typography variant="h4" className="mb-2" sx={{color:"#b4ff43d2",}} >
               Pronađi trenera jednostavno i brzo
@@ -39,7 +42,7 @@ const Home = () => {
             </Typography>
           </Grid>
           <Grid item xs={12} md={6} 
-          sx={{padding:4,marginTop:4}}
+          sx={{padding:4,marginTop:4,alignItems:'center', justifyContent:'center'}}
           >
             <Box
               component="img"
@@ -152,8 +155,8 @@ const Home = () => {
                 listStyle:"none",
                 paddingLeft:"5px"
             }}>
-              <li>Pretražuj i filtriraj</li>
-              <li>Zakaži trening i kontaktiraj tvog omiljenog trenera</li>
+              <li>✅ Pretražuj i filtriraj</li>
+              <li>✅ Zakaži trening i kontaktiraj tvog omiljenog trenera</li>
             </ul>
           </Grid>
           <Grid item xs={12} md={6} sx={{padding:4,}}>
@@ -175,7 +178,53 @@ const Home = () => {
             />
           </Grid>
         </Grid>
+
+      
+      <Box sx={{
+        position: 'relative',
+        width: '100%',
+        overflow: 'hidden',
+        marginTop: 5,
+        height: '200px',
+      }}>
+        <Box
+          sx={{
+            display: 'flex',
+            animation: 'marquee 8s linear infinite',
+          }}
+        >
+          {repeatedImages.map((src, index) => (
+            <Box
+              key={index}
+              component="img"
+              src={src}
+              alt={`Slika ${index}`}
+              sx={{
+                width: '300px',
+                 margin: 0,
+                padding: 0,
+              }}
+            />
+          ))}
+        </Box>
+      </Box>
+
+      
+      <style>
+        {`
+          @keyframes marquee {
+            0% {
+              transform: translateX(0);
+            }
+            100% {
+              transform: translateX(-50%);
+            }
+          }
+        `}
+      </style>
+
       </Container>
+      
     </main>
   );
 };
