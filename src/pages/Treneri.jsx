@@ -8,6 +8,7 @@ import MapaComponent from '../components/MapaComponent';
 import LoginPopup from '../components/RegistrationPopup'; 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import BASE_URL from '../api';
 
 const Treneri = () => {
   const [trainers, setTrainers] = useState([]);
@@ -46,7 +47,7 @@ const Treneri = () => {
 
     const fetchTrainers = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/trainers');
+        const response = await axios.get(`${BASE_URL}/api/trainers`);
         setTrainers(response.data);
         setFilteredTrainers(response.data);
 

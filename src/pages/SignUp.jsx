@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import "./SignUp.css";
+import BASE_URL from "../api";
 
 const SignUp = () => {
   const [formValues, setFormValues] = useState({
@@ -85,7 +86,7 @@ const SignUp = () => {
       try {
         setLoading(true); 
 
-        const response = await axios.post("http://localhost:5001/api/auth/register", formValues);
+        const response = await axios.post(`${BASE_URL}/api/auth/register`, formValues);
 
         console.log("Response:", response); 
 

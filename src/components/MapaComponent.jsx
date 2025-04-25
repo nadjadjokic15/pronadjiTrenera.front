@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
+import BASE_URL from '../api';
 
 
 const geocodeAddress = async (address) => {
@@ -31,7 +32,7 @@ const MapaComponent = () => {
 
   const fetchTrainers = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/api/trainers');
+      const response = await axios.get(`${BASE_URL}/api/trainers`);
       setTrainers(response.data);
     } catch (err) {
       setError('Error fetching trainers');

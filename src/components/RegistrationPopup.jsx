@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-toastify';
+import BASE_URL from '../api';
 
 
 const LoginPopup = ({ open, onClose, onLoginSuccess }) => {
@@ -34,7 +35,7 @@ const LoginPopup = ({ open, onClose, onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5001/api/auth/login', { email, password });
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, { email, password });
       if (response.data.token) {
         sessionStorage.setItem('authToken', response.data.token);
         sessionStorage.setItem('user', JSON.stringify(response.data.user));

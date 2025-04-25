@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Typography, Grid, Paper, List, ListItem, ListItemText, Select, MenuItem, InputLabel, FormControl, TextField } from "@mui/material";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import BASE_URL from "../api";
 
 const AppointmentForm = () => {
   const [appointment_date, setAppointmentDate] = useState(""); // Datum termina
@@ -20,13 +21,13 @@ const AppointmentForm = () => {
         const user = jwtDecode(token);
         let response;
         if (user.role === "client") {
-          response = await axios.get(`http://localhost:5001/api/users/${user.id}/appointments`, {
+          response = await axios.get(`${BASE_URL}/api/users/${user.id}/appointments`, {
             headers: {
              'Authorization': `Bearer ${token}`, 
             },
           });
         } else {
-          response = await axios.get(`http://localhost:5001/api/trainers/${user.id}/appointments`, {
+          response = await axios.get(`${BASE_URL}/api/trainers/${user.id}/appointments`, {
             headers: {
               'Authorization': `Bearer ${token}`, 
             },
@@ -42,7 +43,7 @@ const AppointmentForm = () => {
 
     const fetchTrainers = async () => {
       try {
-        const response = await axios.get("http://localhost:5001/api/trainers", {
+        const response = await axios.get(`${BASE_URL}/api/trainers`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -70,7 +71,7 @@ const AppointmentForm = () => {
     try {
       
       const response = await axios.post(
-        "http://localhost:5001/api/appointments", 
+        `${BASE_URL}/api/appointments`, 
         { appointment_date, trainerId },
         {
           headers: {
@@ -100,7 +101,7 @@ const handleCancelAppointment = async (appointmentId) => {
     console.log("Otkazivanje termina sa ID: ", appointmentId); 
     try {
       const response = await axios.put(
-        `http://localhost:5001/api/appointments/cancel/${appointmentId}`,
+        `${BASE_URL}/api/appointments/cancel/${appointmentId}`,
         { }, 
         {
           headers: {

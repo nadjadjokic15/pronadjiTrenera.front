@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./SignUp.css";
 import { jwtDecode } from 'jwt-decode'
+import BASE_URL from "../api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -43,7 +44,7 @@ const Login = () => {
       setLoading(true); 
       
       
-      const response = await axios.post("http://localhost:5001/api/auth/login", {
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, {
         email,
         password,
       });
